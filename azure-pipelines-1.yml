@@ -1,0 +1,28 @@
+trigger:
+- main  # or your branch name
+
+pool:
+  name: self_hosted_pool
+
+steps:
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)'
+    Contents: '**'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.ArtifactStagingDirectory)'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/site.zip'
+    replaceExistingArchive: true
+
+- task: AzureWebApp@1
+  inputs:
+    azureSubscription: 'Free Trial (df365eb2-6ce5-4956-b577-91328e72a671)'
+    appType: 'webApp'  # Use this for Windows Web Apps
+    appName: 'portifolionew'
+    package: '$(Build.ArtifactStagingDirectory)/site.zip'
+
